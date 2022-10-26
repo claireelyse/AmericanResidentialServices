@@ -285,16 +285,6 @@ resource "azurerm_security_center_auto_provisioning" "SubLogAnalytics_NPR" {
         lock_level = "CanNotDelete"
         notes      = "Contact ${var.businessowner}"
         }
-        resource "azurerm_network_watcher" "NWW_Vnet_PRD" {
-        provider = azurerm.sub_PRD
-        name                = "${local.subname_PRD}-NWW-${local.location}"
-        location            = local.location
-        resource_group_name = "${local.subname_PRD}-Vnet-${local.location}"
-        tags =   local.rgtags_PRD
-        lifecycle {
-        ignore_changes = [tags]
-        }
-        }
     resource "azurerm_resource_group" "RG_VNET_NPR"{
     provider = azurerm.sub_NPR
     name     = "${local.subname_NPR}-Vnet-${local.location}"
@@ -324,12 +314,46 @@ resource "azurerm_security_center_auto_provisioning" "SubLogAnalytics_NPR" {
         lock_level = "CanNotDelete"
         notes      = "Contact ${var.businessowner}"
         }
+
+
+#===================================
+# Network Watcher
+#===================================
+    resource "azurerm_resource_group" "RG_NWW_NPR"{
+    provider = azurerm.sub_NPR 
+    name     = "NetworkWatcherRG"
+    location = local.location
+    tags =   local.rgtags_NPR
+    lifecycle {
+        ignore_changes = [tags]
+    }
+    }
         resource "azurerm_network_watcher" "NWW_Vnet_NPR" {
         provider = azurerm.sub_NPR
-        name                = "${local.subname_NPR}-NWW-${local.location}"
+        name                = "NetworkWatcher_${local.location}"
         location            = local.location
         resource_group_name = "NetworkWatcherRG"
         tags =   local.rgtags_NPR
+        lifecycle {
+        ignore_changes = [tags]
+        }
+        }
+
+    resource "azurerm_resource_group" "RG_NWW_PRD"{
+    provider = azurerm.sub_PRD 
+    name     = "NetworkWatcherRG"
+    location = local.location
+    tags =   local.rgtags_PRD
+    lifecycle {
+        ignore_changes = [tags]
+    }
+    }
+        resource "azurerm_network_watcher" "NWW_Vnet_PRD" {
+        provider = azurerm.sub_PRD
+        name                = "NetworkWatcher_${local.location}"
+        location            = local.location
+        resource_group_name = "NetworkWatcherRG"
+        tags =   local.rgtags_PRD
         lifecycle {
         ignore_changes = [tags]
         }

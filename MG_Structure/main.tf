@@ -10,9 +10,9 @@ terraform {
     }
   }
   backend "azurerm" {
-    subscription_id      = ""
-    resource_group_name  = ""
-    storage_account_name = ""
+    subscription_id      = "2aaaea6f-6f28-45c4-bbb3-f966dc631556"
+    resource_group_name  = "Azure-Terraform"
+    storage_account_name = "arsazureterraform"
     container_name       = "terraform"
     key                  = "terraform.tfstate"
   }               
@@ -27,68 +27,55 @@ provider "azurerm" {
 #===================================
 
 #ARS
-resource "azurerm_management_group" "MG_ARS" {
-  display_name = "AmericanResidential Services"
-  parent_management_group_id = ""
+resource "azurerm_management_group" "ARS" {
+  display_name = "AmericanResidentialServices"
 }
-resource "azurerm_role_assignment" "MG_ARS_Read" {
-scope                = azurerm_management_group.MG_ARS.id
+/**
+resource "azurerm_role_assignment" "ARS_Read" {
+scope                = azurerm_management_group.ARS.id
 role_definition_name = "Reader"
 principal_id         = "" # id of the AD group or user
 }
-
+resource "azurerm_role_assignment" "ARS_SE" {
+scope                = azurerm_management_group.ARS.id
+role_definition_name = "Contributor"
+principal_id         = "" # id of the AD group or user
+}
+**/
   #Platform
-  resource "azurerm_management_group" "MG_Platform" {
+  resource "azurerm_management_group" "Platform" {
   display_name = "Platform"
-  parent_management_group_id = azurerm_management_group.MG_ARS.id
-  subscription_ids = [
-    ""
-  ]
+  parent_management_group_id = azurerm_management_group.ARS.id
   } 
 
   #Sandbox
-  resource "azurerm_management_group" "MG_Sandbox" {
+  resource "azurerm_management_group" "Sandbox" {
   display_name = "Sandbox"
-  parent_management_group_id = azurerm_management_group.MG_ARS.id
-  subscription_ids = [
-    ""
-  ]
+  parent_management_group_id = azurerm_management_group.ARS.id
   } 
 
   #Decommissioned
-  resource "azurerm_management_group" "MG_Decommissioned" {
+  resource "azurerm_management_group" "Decommissioned" {
   display_name = "Decommissioned"
-  parent_management_group_id = azurerm_management_group.MG_ARS.id
-  subscription_ids = [
-    ""
-  ]
+  parent_management_group_id = azurerm_management_group.ARS.id
   } 
 
   #Landing Zones
-  resource "azurerm_management_group" "MG_LandingZone" {
+  resource "azurerm_management_group" "LandingZone" {
   display_name = "LandingZone"
-  parent_management_group_id = azurerm_management_group.MG_ARS.id
-  subscription_ids = [
-    ""
-  ]
+  parent_management_group_id = azurerm_management_group.ARS.id
   } 
     #Private
-    resource "azurerm_management_group" "MG_Private" {
+    resource "azurerm_management_group" "Private" {
     display_name = "Private"
-    parent_management_group_id = azurerm_management_group.MG_LandingZone.id
-    subscription_ids = [
-      ""
-    ]
+    parent_management_group_id = azurerm_management_group.LandingZone.id
     }   
     
     #Public
-    resource "azurerm_management_group" "MG_Public" {
+    resource "azurerm_management_group" "Public" {
     display_name = "Public"
-    parent_management_group_id = azurerm_management_group.MG_LandingZone.id
-    subscription_ids = [
-      ""
-    ]
+    parent_management_group_id = azurerm_management_group.LandingZone.id
     } 
-  
+
 
 
